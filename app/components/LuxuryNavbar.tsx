@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 
 const LuxuryNavbar = ({ isLightPage = false }: { isLightPage?: boolean }) => {
@@ -10,6 +11,7 @@ const LuxuryNavbar = ({ isLightPage = false }: { isLightPage?: boolean }) => {
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,9 +61,7 @@ const LuxuryNavbar = ({ isLightPage = false }: { isLightPage?: boolean }) => {
                 <span className={`text-xl md:text-2xl font-sans font-bold tracking-tighter leading-none transition-colors duration-500 ${isDarkText || isMobileMenuOpen ? 'text-[#191c1e]' : 'text-white'}`}>
                   MOON<span className={`${isDarkText || isMobileMenuOpen ? 'text-[#191c1e]/60' : 'text-white/70'}`}>RISE</span>
                 </span>
-                <span className={`text-sm md:text-base font-serif italic -mt-0.5 ml-6 transition-colors duration-500 ${isDarkText || isMobileMenuOpen ? 'text-[#775a19]' : 'text-white/60 group-hover:text-white'}`}>
-                  Villa
-                </span>
+
               </Link>
 
               {/* Centered Navigation Pill (Desktop) */}
@@ -69,16 +69,26 @@ const LuxuryNavbar = ({ isLightPage = false }: { isLightPage?: boolean }) => {
                 ? 'bg-black/5 border-black/10'
                 : 'bg-white/5 border-white/10'
                 }`}>
-                {navLinks.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`relative text-[13px] font-sans font-semibold uppercase tracking-[0.2em] transition-colors group ${isDarkText ? 'text-[#191c1e]/70 hover:text-[#191c1e]' : 'text-white/70 hover:text-white'}`}
-                  >
-                    {item.name}
-                    <span className={`absolute -bottom-1 left-0 w-0 h-[1px] transition-all duration-500 group-hover:w-full ${isDarkText ? 'bg-[#191c1e]' : 'bg-white'}`} />
-                  </Link>
-                ))}
+                {navLinks.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`relative text-[13px] font-sans font-semibold uppercase tracking-[0.2em] transition-colors group 
+                        ${isDarkText 
+                          ? (isActive ? 'text-[#191c1e]' : 'text-[#191c1e]/70 hover:text-[#191c1e]') 
+                          : (isActive ? 'text-white' : 'text-white/70 hover:text-white')
+                        }`}
+                    >
+                      {item.name}
+                      <span className={`absolute -bottom-1 left-0 h-[1px] transition-all duration-500 
+                        ${isActive ? 'w-full' : 'w-0 group-hover:w-full'} 
+                        ${isDarkText ? 'bg-[#191c1e]' : 'bg-white'}`} 
+                      />
+                    </Link>
+                  );
+                })}
               </nav>
 
               {/* CTA & Mobile Trigger */}
