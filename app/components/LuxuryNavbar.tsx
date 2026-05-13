@@ -76,15 +76,15 @@ const LuxuryNavbar = ({ isLightPage = false }: { isLightPage?: boolean }) => {
                       key={item.name}
                       href={item.href}
                       className={`relative text-[13px] font-sans font-semibold uppercase tracking-[0.2em] transition-colors group 
-                        ${isDarkText 
-                          ? (isActive ? 'text-[#191c1e]' : 'text-[#191c1e]/70 hover:text-[#191c1e]') 
+                        ${isDarkText
+                          ? (isActive ? 'text-[#191c1e]' : 'text-[#191c1e]/70 hover:text-[#191c1e]')
                           : (isActive ? 'text-white' : 'text-white/70 hover:text-white')
                         }`}
                     >
                       {item.name}
                       <span className={`absolute -bottom-1 left-0 h-[1px] transition-all duration-500 
                         ${isActive ? 'w-full' : 'w-0 group-hover:w-full'} 
-                        ${isDarkText ? 'bg-[#191c1e]' : 'bg-white'}`} 
+                        ${isDarkText ? 'bg-[#191c1e]' : 'bg-white'}`}
                       />
                     </Link>
                   );

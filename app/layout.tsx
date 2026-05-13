@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   description: "A private, ethereal escape for high-net-worth individuals seeking a quiet, confident, and deeply atmospheric experience.",
 };
 
+import SmoothScroll from "./components/SmoothScroll";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,7 +34,9 @@ export default function RootLayout({
       lang="en"
       className={cn("h-full", "antialiased", playfair.variable, montserrat.variable, "font-sans", geist.variable)}
     >
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">
+        <SmoothScroll>{children}</SmoothScroll>
+      </body>
     </html>
   );
 }
