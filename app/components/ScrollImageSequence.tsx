@@ -40,10 +40,12 @@ const ScrollImageSequence = ({
   });
 
   // Map scroll progress to frame index (Sequential: plays fully first)
-  const frameIndex = useTransform(smoothProgress, [0, 0.75], [0, totalFrames - 1]);
-
-  // Masking progress starts ONLY after video ends (0.75)
-  const maskProgress = useTransform(smoothProgress, [0.75, 0.95], [0, 150]);
+  // Adjusted for 700vh: Ends at ~60% (4.2 screens)
+  const frameIndex = useTransform(smoothProgress, [0, 0.6], [0, totalFrames - 1]);
+  
+  // Masking progress starts at 60% and ends at 85% (1.75 screens)
+  // This leaves the last 15% (1 screen) for the "About" section to slide over
+  const maskProgress = useTransform(smoothProgress, [0.6, 0.85], [0, 150]);
   const heroMaskImage = useTransform(maskProgress, [0, 150], [
     'radial-gradient(circle at 50% 50%, black 0%, transparent 0%)',
     'radial-gradient(circle at 50% 50%, black 100%, transparent 130%)'
@@ -124,7 +126,7 @@ const ScrollImageSequence = ({
   }, [imagesLoaded]);
 
   return (
-    <div ref={containerRef} className="relative h-[600vh] w-full">
+    <div ref={containerRef} className="relative h-[700vh] w-full z-0">
       {/* Background: Image Sequence (Plays first) */}
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-black z-0">
         <canvas
@@ -141,7 +143,7 @@ const ScrollImageSequence = ({
 
         {/* Overlay Content (Intro text) */}
         <motion.div
-          style={{ opacity: useTransform(scrollYProgress, [0.6, 0.75], [1, 0]) }}
+          style={{ opacity: useTransform(scrollYProgress, [0.5, 0.6], [1, 0]) }}
           className="absolute inset-0 flex flex-col items-center justify-center text-white p-8 pointer-events-none z-20"
         >
           <h2 className="text-5xl md:text-8xl font-serif tracking-tighter text-center max-w-5xl leading-[0.9]">

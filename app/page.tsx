@@ -73,12 +73,14 @@ export default function Home() {
         <Hero />
       </ScrollImageSequence>
 
-      <div className="relative z-10 bg-black rounded-t-[4rem] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] -mt-32">
+      <div className="relative z-20 bg-black rounded-t-[4rem] shadow-[0_-30px_60px_rgba(0,0,0,0.5)] -mt-[100vh]">
         <About />
         <MobileAbout />
       </div>
 
-      <Packages />
+      <div className="relative z-20 bg-[#f7f9fb]">
+        <Packages />
+      </div>
 
       {/* Gallery Section - Horizontal Scroll (Desktop) */}
       <div className="relative z-20">
