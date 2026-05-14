@@ -1,3 +1,7 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useScroll, useMotionValueEvent } from 'framer-motion';
 import Hero from "./components/Hero";
 import About from "./components/About";
 import MobileAbout from "./components/MobileAbout";
@@ -7,18 +11,52 @@ import Gallery from "./components/Gallery";
 import MobileGallery from "./components/MobileGallery";
 import ClientStories from "./components/ClientStories";
 import Footer from "./components/Footer";
+import ScrollImageSequence from "./components/ScrollImageSequence";
+import LoadingScreen from "./components/LoadingScreen";
 
 export default function Home() {
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isNavbarVisible, setIsNavbarVisible] = useState(false);
+  const { scrollYProgress } = useScroll();
+
+  // Show navbar only after the image sequence reveal starts
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // Reveal navbar as the sequence ends (~15-20% of total page scroll)
+    if (latest > 0.15) {
+      setIsNavbarVisible(true);
+    } else {
+      setIsNavbarVisible(false);
+    }
+  });
+
+  // Handle loading completion
+  useEffect(() => {
+    if (loadingProgress >= 100) {
+      // Small delay to ensure smooth transition
+      const timer = setTimeout(() => setIsLoading(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [loadingProgress]);
+
   return (
     <main className="relative flex flex-col">
-      <LuxuryNavbar />
+      <LoadingScreen progress={loadingProgress} isLoading={isLoading} />
+      
+      <LuxuryNavbar isVisible={isNavbarVisible} />
 
-      {/* Hero Section - Sticky in Background */}
-      <div className="sticky top-0 h-[120vh] w-full z-0">
+      {/* Cinematic Scroll Image Sequence Section (Intro) */}
+      <ScrollImageSequence 
+        startIndex={1000} 
+        endIndex={1134} 
+        basePath="/Video/f_d_a_d_ee_c_amp__" 
+        extension=".jpg"
+        onProgress={setLoadingProgress}
+      >
         <Hero />
-      </div>
+      </ScrollImageSequence>
 
-      <div className="relative z-10 bg-black rounded-t-[4rem] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] -mt-16">
+      <div className="relative z-10 bg-black rounded-t-[4rem] shadow-[0_-20px_50px_rgba(0,0,0,0.5)] -mt-32">
         <About />
         <MobileAbout />
       </div>
@@ -40,4 +78,3 @@ export default function Home() {
     </main>
   );
 }
-

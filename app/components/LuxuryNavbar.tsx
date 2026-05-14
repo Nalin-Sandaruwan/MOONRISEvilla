@@ -6,9 +6,15 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 
-const LuxuryNavbar = ({ isLightPage = false }: { isLightPage?: boolean }) => {
+const LuxuryNavbar = ({
+  isLightPage = false,
+  isVisible = true
+}: {
+  isLightPage?: boolean;
+  isVisible?: boolean;
+}) => {
   const [scrolled, setScrolled] = useState(false);
-  const [visible, setVisible] = useState(true);
+  const [internalVisible, setInternalVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -19,9 +25,9 @@ const LuxuryNavbar = ({ isLightPage = false }: { isLightPage?: boolean }) => {
 
       // Hide on scroll down, show on scroll up
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setVisible(false);
+        setInternalVisible(false);
       } else {
-        setVisible(true);
+        setInternalVisible(true);
       }
 
       setScrolled(currentScrollY > 50);
@@ -41,10 +47,13 @@ const LuxuryNavbar = ({ isLightPage = false }: { isLightPage?: boolean }) => {
 
   const isDarkText = scrolled || isLightPage;
 
+  // Final visibility is a combination of internal scroll logic and the external prop
+  const finalVisible = internalVisible && isVisible;
+
   return (
     <>
       <AnimatePresence>
-        {visible && (
+        {finalVisible && (
           <motion.header
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
