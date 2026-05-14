@@ -64,9 +64,9 @@ export default function Home() {
 
       {/* Cinematic Scroll Image Sequence Section (Intro) */}
       <ScrollImageSequence
-        startIndex={1000}
-        endIndex={1134}
-        basePath="/Video/f_d_a_d_ee_c_amp__"
+        startIndex={0}
+        endIndex={125}
+        basePath="/Video/a_c_d_b_a_d_c_a_video_mp_"
         extension=".jpg"
         onProgress={setLoadingProgress}
       >

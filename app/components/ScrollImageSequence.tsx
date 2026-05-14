@@ -13,9 +13,9 @@ interface ScrollImageSequenceProps {
 }
 
 const ScrollImageSequence = ({
-  startIndex = 1000,
-  endIndex = 1134,
-  basePath = "/Video/f_d_a_d_ee_c_amp__",
+  startIndex = 0,
+  endIndex = 125,
+  basePath = "/Video/a_c_d_b_a_d_c_a_video_mp_",
   extension = ".jpg",
   children,
   onProgress
@@ -35,7 +35,7 @@ const ScrollImageSequence = ({
   // Create a smoothed version of the scroll progress
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 100,
-    damping: 30,
+    damping: 50,
     restDelta: 0.001
   });
 
@@ -55,7 +55,9 @@ const ScrollImageSequence = ({
     const preloadImages = () => {
       for (let i = startIndex; i <= endIndex; i++) {
         const img = new Image();
-        img.src = `${basePath}${i}${extension}`;
+        // Handle zero padding (e.g., 001 instead of 1)
+        const frameNumber = i.toString().padStart(3, '0');
+        img.src = `${basePath}${frameNumber}${extension}`;
         img.onload = () => {
           loadedCount++;
           const progress = (loadedCount / totalFrames) * 100;
