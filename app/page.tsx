@@ -18,15 +18,27 @@ export default function Home() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isNavbarVisible, setIsNavbarVisible] = useState(false);
+  const [isNavbarWhite, setIsNavbarWhite] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
 
   // Show navbar only after the image sequence reveal starts
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    // Reveal navbar as the sequence ends (~15-20% of total page scroll)
-    if (latest > 0.15) {
+    // Reveal navbar as the sequence ends and Hero emerges
+    // 0.12 is roughly when the circular mask starts opening
+    if (latest > 0.12) {
       setIsNavbarVisible(true);
     } else {
       setIsNavbarVisible(false);
+    }
+
+    // Force white text strictly during the Hero reveal zone and intro sequence
+    // We increase the threshold to 0.4 to ensure it covers the entire Hero materialization 
+    // and stays white until the user definitely enters the next (light-colored) section.
+    if (latest > 0.10 && latest < 0.45) {
+      setIsNavbarWhite(true);
+    } else {
+      setIsNavbarWhite(false);
     }
   });
 
@@ -42,14 +54,19 @@ export default function Home() {
   return (
     <main className="relative flex flex-col">
       <LoadingScreen progress={loadingProgress} isLoading={isLoading} />
-      
-      <LuxuryNavbar isVisible={isNavbarVisible} />
+
+      <LuxuryNavbar
+        isVisible={isNavbarVisible}
+        forceWhite={isNavbarWhite}
+        isOpen={isMenuOpen}
+        setIsOpen={setIsMenuOpen}
+      />
 
       {/* Cinematic Scroll Image Sequence Section (Intro) */}
-      <ScrollImageSequence 
-        startIndex={1000} 
-        endIndex={1134} 
-        basePath="/Video/f_d_a_d_ee_c_amp__" 
+      <ScrollImageSequence
+        startIndex={1000}
+        endIndex={1134}
+        basePath="/Video/f_d_a_d_ee_c_amp__"
         extension=".jpg"
         onProgress={setLoadingProgress}
       >

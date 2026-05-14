@@ -33,7 +33,7 @@ const HeroContent = ({ layout }: HeroContentProps) => {
   };
 
   return (
-    <div className="relative z-10 flex-grow flex flex-col justify-center px-6 md:px-16 lg:px-24 pb-20 md:pb-0">
+    <div className="relative z-10 flex-grow flex flex-col justify-center px-6 md:px-16 lg:px-24 py-20 md:pt-60">
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -46,21 +46,21 @@ const HeroContent = ({ layout }: HeroContentProps) => {
             A Sanctuary Awaits
           </span>
           <h1 className="font-serif text-6xl md:text-8xl lg:text-[10rem] text-white leading-[0.9] tracking-[-0.04em]">
-            Pure <br /> 
+            Pure <br />
             <span className="italic font-light opacity-90 pl-4 md:pl-12">Stillness.</span>
           </h1>
         </motion.div>
 
         <motion.p variants={itemVariants} className="font-sans text-white/50 max-w-lg text-sm md:text-base lg:text-lg leading-[1.8] font-light tracking-[0.05em]">
-          Moonrise Villa is a boutique coastal retreat <br className="hidden md:block" /> 
-          designed for the art of slow living. Discover <br className="hidden md:block" /> 
+          Moonrise Villa is a boutique coastal retreat <br className="hidden md:block" />
+          designed for the art of slow living. Discover <br className="hidden md:block" />
           architectural beauty on the edge of the Indian Ocean.
         </motion.p>
 
         <motion.div variants={itemVariants} className="pt-6">
           <Link
             href="/reserve"
-            className="group relative inline-flex items-center gap-6 text-white text-[10px] uppercase tracking-[0.5em] font-medium"
+            className="group relative flex flex-col md:flex-row items-center gap-6 text-white text-[10px] uppercase tracking-[0.5em] font-medium"
           >
             <span className="relative">
               Begin Your Journey
@@ -68,7 +68,7 @@ const HeroContent = ({ layout }: HeroContentProps) => {
             </span>
             <div className="size-10 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500">
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="rotate-45 group-hover:rotate-0 transition-transform duration-500">
-                <path d="M1 11L11 1M11 1H1M11 1V11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M1 11L11 1M11 1H1M11 1V11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
           </Link>

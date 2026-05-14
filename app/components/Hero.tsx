@@ -79,7 +79,7 @@ const Hero = () => {
       </div>
 
       {/* Manual Slider Navigation - Minimalist Boutique Style */}
-      <div className="absolute bottom-12 right-16 flex items-center gap-4 z-30">
+      <div className="absolute bottom-12 left-1/2 pb-20 md:pb-0 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-16 flex items-center gap-4 z-30">
         <button
           onClick={prevSlide}
           className="group size-12 rounded-full border border-white/10 flex items-center justify-center text-white transition-all duration-500 hover:bg-white hover:text-black"

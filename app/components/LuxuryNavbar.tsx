@@ -8,35 +8,33 @@ import { Menu, X } from 'lucide-react';
 
 const LuxuryNavbar = ({
   isLightPage = false,
-  isVisible = true
+  isVisible = true,
+  forceWhite = false,
+  isOpen: controlledIsOpen,
+  setIsOpen: controlledSetIsOpen
 }: {
   isLightPage?: boolean;
   isVisible?: boolean;
+  forceWhite?: boolean;
+  isOpen?: boolean;
+  setIsOpen?: (open: boolean) => void;
 }) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = controlledIsOpen ?? internalIsOpen;
+  const setIsOpen = controlledSetIsOpen ?? setInternalIsOpen;
+
   const [scrolled, setScrolled] = useState(false);
-  const [internalVisible, setInternalVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-
-      // Hide on scroll down, show on scroll up
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setInternalVisible(false);
-      } else {
-        setInternalVisible(true);
-      }
-
       setScrolled(currentScrollY > 50);
-      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   const navLinks = [
     { name: 'Home', href: '/' },
@@ -45,10 +43,8 @@ const LuxuryNavbar = ({
     { name: 'Contact Us', href: '/contact' }
   ];
 
-  const isDarkText = scrolled || isLightPage;
-
-  // Final visibility is a combination of internal scroll logic and the external prop
-  const finalVisible = internalVisible && isVisible;
+  const isDarkText = forceWhite ? false : (scrolled || isLightPage);
+  const finalVisible = isVisible;
 
   return (
     <>
@@ -59,65 +55,32 @@ const LuxuryNavbar = ({
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${isDarkText
-              ? 'py-4 '
-              : 'py-8 bg-transparent'
-              }`}
+            className="fixed top-0 left-0 w-full z-50 transition-all duration-500 py-6 md:py-8 px-6 md:px-12 pointer-events-none"
           >
-            <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
+            <div className="flex items-center justify-between pointer-events-auto">
               {/* Branding */}
               <Link href="/" className="flex flex-col items-start group relative z-50">
-                <span className={`text-xl md:text-2xl font-sans font-bold tracking-tighter leading-none transition-colors duration-500 ${isDarkText || isMobileMenuOpen ? 'text-[#191c1e]' : 'text-white'}`}>
-                  MOON<span className={`${isDarkText || isMobileMenuOpen ? 'text-[#191c1e]/60' : 'text-white/70'}`}>RISE</span>
+                <span className={`text-xl md:text-2xl font-sans font-bold tracking-tighter leading-none transition-colors duration-500 ${isDarkText || isOpen ? 'text-[#191c1e]' : 'text-white'}`}>
+                  MOON<span className={`${isDarkText || isOpen ? 'text-[#191c1e]/60' : 'text-white/70'}`}>RISE</span>
                 </span>
-
               </Link>
 
-              {/* Centered Navigation Pill (Desktop) */}
-              <nav className={`hidden lg:flex items-center backdrop-blur-xl border rounded-full px-8 py-3.5 space-x-10 transition-all duration-500 ${isDarkText
-                ? 'bg-black/5 border-black/10'
-                : 'bg-white/5 border-white/10'
-                }`}>
-                {navLinks.map((item) => {
-                  const isActive = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className={`relative text-[13px] font-sans font-semibold uppercase tracking-[0.2em] transition-colors group 
-                        ${isDarkText
-                          ? (isActive ? 'text-[#191c1e]' : 'text-[#191c1e]/70 hover:text-[#191c1e]')
-                          : (isActive ? 'text-white' : 'text-white/70 hover:text-white')
-                        }`}
-                    >
-                      {item.name}
-                      <span className={`absolute -bottom-1 left-0 h-[1px] transition-all duration-500 
-                        ${isActive ? 'w-full' : 'w-0 group-hover:w-full'} 
-                        ${isDarkText ? 'bg-[#191c1e]' : 'bg-white'}`}
-                      />
-                    </Link>
-                  );
-                })}
-              </nav>
-
-              {/* CTA & Mobile Trigger */}
-              <div className="flex items-center space-x-4 md:space-x-6 relative z-50">
-                <Link
-                  href="/reserve"
-                  className={`hidden sm:flex group relative overflow-hidden items-center justify-center w-24 md:w-28 h-8 md:h-9 rounded-full font-sans text-[9px] font-bold uppercase tracking-widest transition-all duration-500 shadow-lg ${isDarkText || isMobileMenuOpen
-                    ? 'bg-[#191c1e] text-white'
-                    : 'bg-white text-[#191c1e]'
+              {/* Minimalist Menu Trigger (Unified for all screens) */}
+              <div className="flex items-center space-x-6 relative z-50">
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  className={`group flex items-center gap-4 py-2 pl-6 pr-2 rounded-full transition-all duration-500 backdrop-blur-xl border ${isDarkText || isOpen
+                    ? 'text-[#191c1e] bg-black/5 border-black/10'
+                    : 'text-white bg-white/5 border-white/10'
                     }`}
                 >
-                  <span className="relative z-10">Reserve</span>
-                  <div className="absolute inset-0 bg-[#775a19] transition-transform duration-500 ease-out -translate-x-full group-hover:translate-x-0" />
-                </Link>
-
-                <button
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className={`p-2 rounded-full transition-colors duration-500 ${isDarkText || isMobileMenuOpen ? 'text-[#191c1e] bg-black/5' : 'text-white bg-white/10'} lg:hidden`}
-                >
-                  {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                  <span className="hidden md:block text-[9px] font-sans font-bold uppercase tracking-[0.4em] opacity-40 group-hover:opacity-100 transition-opacity">
+                    {isOpen ? 'Close' : 'Menu'}
+                  </span>
+                  <div className={`p-2 rounded-full transition-colors duration-500 ${isDarkText || isOpen ? 'bg-black/5' : 'bg-white/10'
+                    }`}>
+                    {isOpen ? <X size={18} strokeWidth={1.5} /> : <Menu size={18} strokeWidth={1.5} />}
+                  </div>
                 </button>
               </div>
             </div>
@@ -125,31 +88,35 @@ const LuxuryNavbar = ({
         )}
       </AnimatePresence>
 
-      {/* Mobile Menu Overlay */}
+      {/* Unified Menu Overlay */}
       <AnimatePresence>
-        {isMobileMenuOpen && (
+        {isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-[40] bg-white lg:hidden flex flex-col justify-center px-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[40] bg-white flex flex-col items-center justify-center overflow-hidden"
           >
-            <nav className="flex flex-col space-y-8">
+            {/* Background Texture */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
+            <nav className="relative z-10 flex flex-col items-center space-y-8 md:space-y-12">
               {navLinks.map((item, index) => (
                 <motion.div
                   key={item.name}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + index * 0.1 }}
+                  transition={{ delay: 0.1 + index * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 >
                   <Link
                     href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="group flex items-baseline gap-4"
+                    onClick={() => setIsOpen(false)}
+                    className="group flex flex-col items-center"
                   >
-                    <span className="font-sans text-[10px] text-[#775a19] font-bold tracking-widest opacity-40">0{index + 1}</span>
-                    <span className="font-serif text-5xl md:text-7xl italic hover:text-[#775a19] transition-colors leading-none tracking-tighter">
+                    <span className="font-sans text-[10px] text-[#775a19] font-bold tracking-[0.5em] uppercase mb-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      0{index + 1}
+                    </span>
+                    <span className="font-serif text-5xl md:text-8xl italic hover:text-[#775a19] transition-all duration-500 leading-none tracking-tighter">
                       {item.name}
                     </span>
                   </Link>
@@ -157,23 +124,31 @@ const LuxuryNavbar = ({
               ))}
             </nav>
 
+            {/* Footer Info */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="absolute bottom-12 left-12 right-12 flex flex-col sm:flex-row items-center justify-between gap-8 pt-12 border-t border-black/5"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="absolute bottom-12 left-12 right-12 flex flex-col md:flex-row items-center justify-between gap-8 pt-8 border-t border-black/5"
             >
-              <div className="space-y-1 text-center sm:text-left">
-                <p className="font-sans text-[10px] uppercase tracking-widest text-black/30 font-bold">Direct Inquiry</p>
-                <p className="font-serif italic text-lg">+94 77 123 4567</p>
+              <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-1">
+                <p className="font-sans text-[10px] uppercase tracking-widest text-black/30 font-bold">Southern Coast</p>
+                <p className="font-serif italic text-lg">Tangalle, Sri Lanka</p>
               </div>
+
               <Link
                 href="/reserve"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full sm:w-auto px-12 py-5 bg-[#191c1e] text-white rounded-full font-sans text-[10px] font-bold uppercase tracking-widest shadow-xl text-center"
+                onClick={() => setIsOpen(false)}
+                className="group relative px-12 py-5 bg-[#191c1e] text-white rounded-full font-sans text-[10px] font-bold uppercase tracking-[0.3em] shadow-xl overflow-hidden"
               >
-                Book Your Sanctuary
+                <span className="relative z-10">Reserve Your Sanctuary</span>
+                <div className="absolute inset-0 bg-[#775a19] transition-transform duration-500 ease-out translate-y-full group-hover:translate-y-0" />
               </Link>
+
+              <div className="flex flex-col items-center md:items-end text-center md:text-right space-y-1">
+                <p className="font-sans text-[10px] uppercase tracking-widest text-black/30 font-bold">Enquiries</p>
+                <p className="font-serif italic text-lg">+94 77 123 4567</p>
+              </div>
             </motion.div>
           </motion.div>
         )}
