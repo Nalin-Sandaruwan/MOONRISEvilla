@@ -39,14 +39,14 @@ const ScrollImageSequence = ({
     restDelta: 0.001
   });
 
-  // Map scroll progress to frame index (play till ~85% of scroll)
-  const frameIndex = useTransform(smoothProgress, [0, 0.85], [0, totalFrames - 1]);
+  // Map scroll progress to frame index (Sequential: plays fully first)
+  const frameIndex = useTransform(smoothProgress, [0, 0.75], [0, totalFrames - 1]);
 
-  // Masking progress (Hero expands from 0.8 to 0.95 scroll)
-  const maskProgress = useTransform(smoothProgress, [0.8, 0.95], [0, 150]);
-  const heroClipPath = useTransform(maskProgress, [0, 150], [
-    'circle(0% at 50% 50%)',
-    'circle(150% at 50% 50%)'
+  // Masking progress starts ONLY after video ends (0.75)
+  const maskProgress = useTransform(smoothProgress, [0.75, 0.95], [0, 150]);
+  const heroMaskImage = useTransform(maskProgress, [0, 150], [
+    'radial-gradient(circle at 50% 50%, black 0%, transparent 0%)',
+    'radial-gradient(circle at 50% 50%, black 100%, transparent 130%)'
   ]);
 
   // Preload images
@@ -173,7 +173,14 @@ const ScrollImageSequence = ({
 
       {/* Foreground: Hero Section (Reveals itself through mask) */}
       <motion.div
-        style={{ clipPath: heroClipPath }}
+        style={{
+          WebkitMaskImage: heroMaskImage,
+          maskImage: heroMaskImage,
+          WebkitMaskRepeat: 'no-repeat',
+          maskRepeat: 'no-repeat',
+          WebkitMaskSize: 'cover',
+          maskSize: 'cover'
+        }}
         className="sticky top-0 h-screen w-full overflow-hidden z-10"
       >
         {children}
